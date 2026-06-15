@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: clients
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: 123456Az
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/clients
+  liquibase:
+    enabled: false
+    drop-first: false
+    default-schema: public
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+
+
+server:
+  port: 8083
+

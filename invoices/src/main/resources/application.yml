@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: invoices
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: 123456Az
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/billing_invoices
+  liquibase:
+    enabled: false
+    drop-first: false
+    default-schema: public
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+server:
+  port: 8081
+

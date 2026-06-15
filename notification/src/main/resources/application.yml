@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: notification
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: 123456Az
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/notifications
+  liquibase:
+    enabled: false
+    drop-first: false
+    default-schema: public
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+
+server:
+  port: 8082
+

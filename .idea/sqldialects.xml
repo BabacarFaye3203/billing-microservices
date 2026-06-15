@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/client/src/main/resources/changelog/changes/v1/001_SSM_CREATE_DATABASE.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/client/src/main/resources/changelog/changes/v1/002_SSM_CREATE_TABLE_CLIENTS.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/invoices/src/main/resources/changelog/changes/v1/001_SSM_CREATE_DATABASE.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/invoices/src/main/resources/changelog/changes/v1/002_SSM_CREATE_TABLE_invoiceS.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/invoices/src/main/resources/changelog/changes/v1/003_SSM_CREATE_TABLE_invoiceProductS.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/invoices/src/main/resources/changelog/changes/v1/004_SSM_CREATE_TABLE_invoiceClients.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/invoices/src/main/resources/changelog/changes/v1/005_ALTER_TABLE_INVOICE_PRODUCTS.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/invoices/src/main/resources/changelog/changes/v1/006_ALTER_TABLE_INVOICES.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/notification/src/main/resources/changelog/changes/v1/001_SSM_CREATE_DATABASE.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/notification/src/main/resources/changelog/changes/v1/002_SSM_CREATE_TABLE_NOTIFICATIONS.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/products/src/main/resources/changelog/changes/v1/001_SSM_CREATE_DATABASE.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/products/src/main/resources/changelog/changes/v1/002_SSM_CREATE_TABLE_PRODUCTS.sql" dialect="PostgreSQL" />
+  </component>
+</project>

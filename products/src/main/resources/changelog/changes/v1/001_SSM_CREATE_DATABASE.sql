@@ -1,0 +1,1 @@
+CREATE database billing_products;
