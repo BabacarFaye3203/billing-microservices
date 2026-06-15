@@ -1,4 +1,4 @@
-package com.babacar.app;
+package com.babacar.app.constants;
 
 import java.util.Set;
 

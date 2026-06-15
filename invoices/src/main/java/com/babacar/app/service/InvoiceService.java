@@ -1,6 +1,6 @@
 package com.babacar.app.service;
 
-import com.babacar.app.InvoiceStatus;
+import com.babacar.app.constants.InvoiceStatus;
 import com.babacar.app.dto.requests.InvoiceRequest;
 import com.babacar.app.dto.responses.ClientResponse;
 import com.babacar.app.dto.responses.InvoiceProductResponse;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
