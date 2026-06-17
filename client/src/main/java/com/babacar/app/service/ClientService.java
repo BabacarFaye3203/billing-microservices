@@ -1,5 +1,6 @@
 package com.babacar.app.service;
 
+import com.babacar.app.dto.ListResponse;
 import com.babacar.app.dto.request.ClientRequest;
 import com.babacar.app.dto.responses.ClientResponse;
 import com.babacar.app.entities.Client;
@@ -7,6 +8,9 @@ import com.babacar.app.exception.ClientNotFoundException;
 import com.babacar.app.mapper.ClientMapper;
 import com.babacar.app.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -50,12 +54,23 @@ public class ClientService {
     }
 
 
-    public List<ClientResponse> getAllClients() {
+    public ListResponse<?> getAllClients(int page, int size) {
 
-        return clientRepository.findAll()
+        Pageable pageable= PageRequest.of(page,size);
+        Page<Client> clients= clientRepository.findAllClients(pageable);
+        List<ClientResponse> content=clientRepository.findAllClients(pageable)
                 .stream()
                 .map(clientMapper::mapToResponse)
                 .toList();
+
+        return new  ListResponse<ClientResponse>(
+                content,
+                clients.getNumber(),
+                content.size(),
+                clients.getTotalElements(),
+                clients.getTotalPages(),
+                clients.hasNext()
+                );
     }
 
     public ClientResponse updateClient(String uuid, ClientRequest request) {

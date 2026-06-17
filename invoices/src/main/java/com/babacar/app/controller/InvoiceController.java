@@ -6,10 +6,7 @@ import com.babacar.app.service.InvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
@@ -24,6 +21,19 @@ public class InvoiceController {
             @RequestBody InvoiceRequest request
     ){
         return invoiceService.create(request);
+    }
+
+    @GetMapping("/{uuid}")
+    @Operation(summary = "get by uuid")
+    public InvoiceResponse getByUuid(
+            @PathVariable(name = "uuid") String uuid){
+        return invoiceService.getByUuid(uuid);
+    }
+
+    @DeleteMapping("/{uuid}")
+    public void delete(
+            @PathVariable(name = "uuid") String uuid){
+        invoiceService.delete(uuid);
     }
 
 }

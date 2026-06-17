@@ -1,11 +1,11 @@
 package com.babacar.app.mapper;
 
 import com.babacar.app.dto.responses.ClientResponse;
+import com.babacar.app.dto.responses.InvoicePaymentResponse;
 import com.babacar.app.dto.responses.InvoiceProductResponse;
-import com.babacar.app.dto.responses.InvoiceResponse;
 import com.babacar.app.entities.InvoiceClients;
+import com.babacar.app.entities.InvoicePayments;
 import com.babacar.app.entities.Invoices;
-import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -56,4 +56,27 @@ public class InvoiceMapper {
                 invoices.getClients().getCreatedAt()
         );
     }
+
+    public InvoicePaymentResponse mapToInvoicePaymentResponse(InvoicePayments invoicePayments){
+        return InvoicePaymentResponse.builder()
+                .uuid(invoicePayments.getUuid())
+                .invoiceUuid(invoicePayments.getInvoiceUuid())
+                .amount(invoicePayments.getAmount())
+                .paymentMethod(invoicePayments.getPaymentMethod())
+                .dateTime(invoicePayments.getDateTime())
+                .build();
+    }
+
+    public List<InvoicePaymentResponse> mapToInvoicePaymentResponseList(Invoices invoices){
+        return invoices.getPayments().stream()
+                .map(invoicePayments -> InvoicePaymentResponse.builder()
+                        .uuid(invoicePayments.getUuid())
+                        .invoiceUuid(invoicePayments.getInvoiceUuid())
+                        .amount(invoicePayments.getAmount())
+                        .paymentMethod(invoicePayments.getPaymentMethod())
+                        .dateTime(invoicePayments.getDateTime())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }

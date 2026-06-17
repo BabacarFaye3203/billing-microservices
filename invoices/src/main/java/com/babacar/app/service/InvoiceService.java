@@ -1,22 +1,25 @@
 package com.babacar.app.service;
 
 import com.babacar.app.constants.InvoiceStatus;
+import com.babacar.app.constants.PaymentMethodConstants;
 import com.babacar.app.dto.requests.InvoiceRequest;
-import com.babacar.app.dto.responses.ClientResponse;
-import com.babacar.app.dto.responses.InvoiceProductResponse;
-import com.babacar.app.dto.responses.InvoiceResponse;
-import com.babacar.app.dto.responses.ProductResponse;
+import com.babacar.app.dto.responses.*;
 import com.babacar.app.entities.InvoiceClients;
+import com.babacar.app.entities.InvoicePayments;
 import com.babacar.app.entities.InvoiceProducts;
 import com.babacar.app.entities.Invoices;
+import com.babacar.app.exception.InvoiceNotFountException;
+import com.babacar.app.exception.InvoicePaymentMethodNotAllowedException;
 import com.babacar.app.exception.InvoiceStatusNotAllowedException;
 import com.babacar.app.mapper.InvoiceMapper;
 import com.babacar.app.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,10 +27,19 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class InvoiceService {
+
+    @Value("${rabbitmq.exchange.name}")
+    private String exchangeName;
+    @Value("${rabbitmq.routingKey.name}")
+    private String routingKey;
+
     private final InvoiceRepository invoiceRepository;
     private final RestTemplate restTemplate;
     private final KafkaProducer kafkaProducer;
     private final InvoiceMapper invoiceMapper;
+    private final RabbitmqProducer rabbitmqProducer;
+
+    InvoicePaymentResponse invoicePaymentResponse=InvoicePaymentResponse.builder().build();
 
     @Transactional
     public InvoiceResponse create(InvoiceRequest request){
@@ -36,6 +48,8 @@ public class InvoiceService {
         invoice.setNumber("In"+UUID.randomUUID());
         if (!InvoiceStatus.VALID_STATUS.contains(request.status()))
             throw new  InvoiceStatusNotAllowedException("invoice status not allowed");
+        if (!PaymentMethodConstants.VALID_PAYMENTS.contains(request.paymentMethod()))
+            throw new InvoicePaymentMethodNotAllowedException("invoice payment method not allowed");
         invoice.setStatus(request.status());
 
         List<InvoiceProducts> invoiceProducts=request.invoiceProduct()
@@ -63,10 +77,36 @@ public class InvoiceService {
         InvoiceClients invoiceClient=invoiceMapper.mapToInvoiceClient(clientResponse);
         invoice.setClients(invoiceClient);
 
+        List<InvoicePayments> invoicePayments=request.paymentRequests()
+                .stream()
+                .map(invoicePaymentRequest ->{
+                    InvoicePayments savedIp=InvoicePayments.builder()
+                        .invoiceUuid(invoice.getUuid())
+                        .amount(invoicePaymentRequest.amount())
+                        .paymentMethod(invoicePaymentRequest.paymentMethod())
+                        .dateTime(LocalDateTime.now())
+                        .invoices(invoice)
+                        .uuid(UUID.randomUUID().toString())
+                        .build();
+
+                    invoicePaymentResponse=invoiceMapper.mapToInvoicePaymentResponse(savedIp);
+
+                    return savedIp;
+
+                }
+                ).collect(Collectors.toList());
+        rabbitmqProducer.publish(exchangeName,routingKey,invoicePaymentResponse);
+
+        invoice.setPayments(invoicePayments);
+
         invoice.setInvoiceProducts(invoiceProducts);
+        invoice.setPayments(invoicePayments);
         Invoices saved=invoiceRepository.save(invoice);
 
-        List<InvoiceProductResponse> invoiceProductResponses=invoiceMapper.mapToInvoiceProductResponseList(saved);
+        List<InvoicePaymentResponse> invoicePaymentResponses=invoiceMapper
+                .mapToInvoicePaymentResponseList(saved);
+        List<InvoiceProductResponse> invoiceProductResponses=invoiceMapper
+                .mapToInvoiceProductResponseList(saved);
         ClientResponse clientResponse1=invoiceMapper.mapToInvoiceClientResponse(saved);
 
 
@@ -76,15 +116,44 @@ public class InvoiceService {
                 invoiceProductResponses,
                 saved.getPrice(),
                 saved.getStatus(),
-                clientResponse1
+                clientResponse1,
+                invoicePaymentResponses
         );
 
         kafkaProducer.publish(response);
 
         return response;
 
-
-
-
     }
+
+    public InvoiceResponse getByUuid(String uuid){
+        Invoices invoices=invoiceRepository.findByUuid(uuid).orElseThrow(
+                ()->new InvoiceNotFountException("invoice not found")
+        );
+
+        List<InvoicePaymentResponse> invoicePaymentResponses=invoiceMapper
+                .mapToInvoicePaymentResponseList(invoices);
+        List<InvoiceProductResponse> invoiceProductResponses=invoiceMapper
+                .mapToInvoiceProductResponseList(invoices);
+        ClientResponse clientResponse=invoiceMapper.mapToInvoiceClientResponse(invoices);
+
+        return new InvoiceResponse(
+                invoices.getUuid(),
+                invoices.getNumber(),
+                invoiceProductResponses,
+                invoices.getPrice(),
+                invoices.getStatus(),
+                clientResponse,
+                invoicePaymentResponses
+        );
+    }
+
+    public void delete(String uuid){
+        Invoices invoices=invoiceRepository.findByUuid(uuid).orElseThrow(
+                ()->new InvoiceNotFountException("invoice not foun")
+        );
+        invoiceRepository.delete(invoices);
+    }
+
+
 }

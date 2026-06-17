@@ -29,5 +29,9 @@ public class Invoices {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "client_id")
     private InvoiceClients clients;
+    @OneToMany(mappedBy = "invoices", cascade = CascadeType.ALL)
+    private List<InvoicePayments> payments;
+    @Column(name = "payment_method")
+    private String paymentMethod;
 
 }

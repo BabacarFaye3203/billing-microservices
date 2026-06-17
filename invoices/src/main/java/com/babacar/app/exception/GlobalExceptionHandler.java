@@ -17,4 +17,25 @@ public class GlobalExceptionHandler {
         );
 
     }
+
+    @ExceptionHandler(InvoiceNotFountException.class)
+    public ApiResponse handleInvoiceNotFound(InvoiceNotFountException e){
+        return new ApiResponse(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.value()
+        );
+
+    }
+
+    @ExceptionHandler(InvoicePaymentMethodNotAllowedException.class)
+    public ApiResponse handleInvoicePaymentMethodNotAllowedException(
+            InvoicePaymentMethodNotAllowedException e){
+        return new ApiResponse(
+                e.getMessage(),
+                HttpStatus.NOT_ACCEPTABLE,
+                HttpStatus.NOT_ACCEPTABLE.value()
+        );
+
+    }
 }

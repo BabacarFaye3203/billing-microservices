@@ -1,1 +1,1 @@
-CREATE database billing_invoices;
+CREATE database billing_payments;

@@ -1,12 +1,12 @@
 spring:
   application:
-    name: invoices
+    name: payments
 
   datasource:
     driver-class-name: org.postgresql.Driver
     password: 123456Az
     username: postgres
-    url: jdbc:postgresql://localhost:5432/billing_invoices
+    url: jdbc:postgresql://localhost:5432/billing_payments
   liquibase:
     enabled: false
     drop-first: false
@@ -16,20 +16,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
 server:
-  port: 8081
+  port: 8084
 
 rabbitmq:
   queue:
     name: payment_queue
-  exchange:
-    name: invoice_exchange
-  invoice:
-    payment:
-      banding: invoice_to_payment

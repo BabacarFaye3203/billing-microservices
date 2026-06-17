@@ -11,5 +11,6 @@ public record InvoiceResponse(
         List<InvoiceProductResponse> invoiceProducts,
         double price,
         String status,
-        ClientResponse client
+        ClientResponse client,
+        List<InvoicePaymentResponse> invoicePayments
 ) {}

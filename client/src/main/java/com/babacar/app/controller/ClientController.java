@@ -1,5 +1,6 @@
 package com.babacar.app.controller;
 
+import com.babacar.app.dto.ListResponse;
 import com.babacar.app.dto.request.ClientRequest;
 import com.babacar.app.dto.responses.ClientResponse;
 import com.babacar.app.service.ClientService;
@@ -9,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/clients")
@@ -36,10 +36,10 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClientResponse>> getAllClients() {
+    public ResponseEntity<ListResponse<?>> getAllClients(int page, int size) {
 
         return ResponseEntity.ok(
-                clientService.getAllClients()
+                clientService.getAllClients(page,size)
         );
     }
 

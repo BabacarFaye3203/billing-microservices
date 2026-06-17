@@ -5,6 +5,8 @@ import java.util.List;
 public record InvoiceRequest(
         List<InvoiceProductRequest> invoiceProduct,
         String status,
-        String client_uuid
+        String client_uuid,
+        String paymentMethod,
+        List<InvoicePaymentRequest> paymentRequests
 ) {
 }

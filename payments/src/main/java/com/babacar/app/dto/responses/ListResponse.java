@@ -1,15 +1,14 @@
-package com.babacar.app.dto;
-
-import com.babacar.app.dto.responses.ClientResponse;
+package com.babacar.app.dto.responses;
 
 import java.util.List;
 
 public record ListResponse<T>(
-        List<ClientResponse> content,
+        List<T> content,
         int pageNumber,
         int pageSize,
-        long totalMembers,
+        long totalElements,
         int totalPages,
         boolean hasNext
+
 ) {
 }
