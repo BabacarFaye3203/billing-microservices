@@ -3,11 +3,13 @@ package com.babacar.app.mapper;
 import com.babacar.app.dto.responses.ClientResponse;
 import com.babacar.app.dto.responses.InvoicePaymentResponse;
 import com.babacar.app.dto.responses.InvoiceProductResponse;
+import com.babacar.app.dto.responses.InvoiceResponse;
 import com.babacar.app.entities.InvoiceClients;
 import com.babacar.app.entities.InvoicePayments;
 import com.babacar.app.entities.Invoices;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -77,6 +79,33 @@ public class InvoiceMapper {
                         .dateTime(invoicePayments.getDateTime())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public InvoiceResponse mapToInvoiceResponse(Invoices invoice){
+        return new InvoiceResponse(
+                invoice.getUuid(),
+                invoice.getNumber(),
+                mapToInvoiceProductResponseList(invoice),
+                invoice.getPrice(),
+                invoice.getStatus(),
+                mapToClientResponse(invoice),
+                mapToInvoicePaymentResponseList(invoice)
+        );
+    }
+
+
+    public ClientResponse mapToClientResponse(Invoices invoice){
+        return new ClientResponse(
+                invoice.getClients().getUuid(),
+                invoice.getClients().getFirstName(),
+                invoice.getClients().getLastName(),
+                invoice.getClients().getEmail(),
+                invoice.getClients().getPhone(),
+                invoice.getClients().getAddress(),
+                invoice.getClients().getCity(),
+                invoice.getClients().getCountry(),
+                invoice.getClients().getCreatedAt()
+        );
     }
 
 }

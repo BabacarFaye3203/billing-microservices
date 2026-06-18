@@ -15,6 +15,9 @@ import com.babacar.app.mapper.InvoiceMapper;
 import com.babacar.app.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -56,7 +59,7 @@ public class InvoiceService {
                 .stream()
                 .map(ipr->{
                     ProductResponse productResponse=restTemplate.getForObject(
-                            "http://localhost:8080/api/v1/products/"+ipr.product_uuid(),
+                            "http://BILLING-PRODUCTS/api/v1/products/"+ipr.product_uuid(),
                             ProductResponse.class
                     );
                     return InvoiceProducts.builder()
@@ -71,7 +74,7 @@ public class InvoiceService {
                 }).collect(Collectors.toList());
 
         ClientResponse clientResponse=restTemplate.getForObject(
-                "http://localhost:8083/api/v1/clients/"+request.client_uuid(),
+                "http://CLIENTS/api/v1/clients/"+request.client_uuid(),
                 ClientResponse.class
         );
         InvoiceClients invoiceClient=invoiceMapper.mapToInvoiceClient(clientResponse);
@@ -108,7 +111,6 @@ public class InvoiceService {
         List<InvoiceProductResponse> invoiceProductResponses=invoiceMapper
                 .mapToInvoiceProductResponseList(saved);
         ClientResponse clientResponse1=invoiceMapper.mapToInvoiceClientResponse(saved);
-
 
         InvoiceResponse response= new InvoiceResponse(
                 saved.getUuid(),
@@ -153,6 +155,28 @@ public class InvoiceService {
                 ()->new InvoiceNotFountException("invoice not foun")
         );
         invoiceRepository.delete(invoices);
+    }
+
+    public ListResponse<?> getAll(
+            int page,
+            int size
+    ){
+        Pageable pageable= PageRequest.of(page,size);
+
+        Page<Invoices> invoices=invoiceRepository.getAllInvoices(pageable);
+        List<InvoiceResponse> content=invoiceRepository.getAllInvoices(pageable)
+                .stream()
+                .map(invoiceMapper::mapToInvoiceResponse)
+                .toList();
+
+        return new ListResponse<InvoiceResponse>(
+                content,
+                invoices.getNumber(),
+                content.size(),
+                invoices.getTotalElements(),
+                invoices.getTotalPages(),
+                invoices.hasNext()
+        );
     }
 
 

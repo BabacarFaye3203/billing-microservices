@@ -1,6 +1,5 @@
 package com.babacar.app.service;
 
-import com.babacar.app.dto.requests.PaymentRequest;
 import com.babacar.app.dto.responses.InvoicePaymentResponse;
 import com.babacar.app.dto.responses.ListResponse;
 import com.babacar.app.dto.responses.PaymentResponse;

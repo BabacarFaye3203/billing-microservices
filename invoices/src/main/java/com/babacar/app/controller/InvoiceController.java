@@ -2,6 +2,7 @@ package com.babacar.app.controller;
 
 import com.babacar.app.dto.requests.InvoiceRequest;
 import com.babacar.app.dto.responses.InvoiceResponse;
+import com.babacar.app.dto.responses.ListResponse;
 import com.babacar.app.service.InvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,14 @@ public class InvoiceController {
     public void delete(
             @PathVariable(name = "uuid") String uuid){
         invoiceService.delete(uuid);
+    }
+
+    @GetMapping("/all")
+    public ListResponse<?> getAll(
+           @RequestParam(value = "page",defaultValue = "0") int page,
+           @RequestParam(value = "size",defaultValue = "10")int size
+    ){
+        return invoiceService.getAll(page,size);
     }
 
 }
