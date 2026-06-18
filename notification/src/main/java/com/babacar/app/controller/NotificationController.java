@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/templates")
-@Tag(name = "Template APIs")
-public class TemplateController {
+@RequestMapping("/api/v1/notifications")
+@Tag(name = "notifications APIs")
+public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping
-    @Operation(summary = "create a template")
+    @Operation(summary = "create a notification")
     public NotificationResponse create(
            @Valid @RequestBody NotificationRequest request){
         return notificationService.create(request);
@@ -26,14 +26,14 @@ public class TemplateController {
     }
 
     @GetMapping("/{uuid}")
-    @Operation(summary = "get a template by uuid")
+    @Operation(summary = "get a notification by uuid")
     public NotificationResponse getByUuid(
             @PathVariable(value = "uuid") String uuid){
         return notificationService.getByUuid(uuid);
     }
 
     @DeleteMapping("/{uuid}")
-    @Operation(summary = "delete a template by uuid")
+    @Operation(summary = "delete a notification by uuid")
     public void delete(
             @PathVariable(value = "uuid") String uuid){
         notificationService.delete(uuid);
@@ -41,7 +41,7 @@ public class TemplateController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "get all templates with pagination")
+    @Operation(summary = "get all notifications with pagination")
     public ListResponse<?> findAll(
            @RequestParam(value = "page",defaultValue = "0") int page,
            @RequestParam(value = "size",defaultValue = "10") int size
