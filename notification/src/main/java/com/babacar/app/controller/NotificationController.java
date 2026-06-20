@@ -48,4 +48,13 @@ public class NotificationController {
     ){
         return notificationService.findAll(page,size);
     }
+    @GetMapping
+    @Operation(summary = "get all notification sent to a specific email")
+    public ListResponse<?> getAllByEmail(
+            @RequestParam(value = "email") String email,
+            @RequestParam(value = "page",defaultValue = "0") int page,
+            @RequestParam(value = "size",defaultValue = "10") int size
+    ){
+        return notificationService.getAllByEmail(email,page,size);
+    }
 }

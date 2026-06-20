@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public record InvoicePaymentRequest(
         double amount,
         String paymentMethod,
-        LocalDateTime dateTime,
-        int invoice
+        LocalDateTime dateTime
 ) {
 }

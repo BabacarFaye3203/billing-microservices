@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record ApiResponse(
         String message,
         int code,
-        HttpStatus httpStatus,
-        LocalDateTime dateTime
+        HttpStatus status
+//        LocalDateTime dateTime
 ) {
 }

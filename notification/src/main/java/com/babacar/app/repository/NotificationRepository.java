@@ -16,4 +16,6 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
         SELECT t from Notification t
     """)
     Page<Notification> findAllTemplates(Pageable pageable);
+
+        Page<Notification> findAllByEmail(String email,Pageable pageable);
 }

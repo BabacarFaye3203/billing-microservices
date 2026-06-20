@@ -17,8 +17,8 @@ public class HandleGlobalException {
         return new ApiResponse(
                 exception.getMessage(),
                 HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND,
-                LocalDateTime.now()
+                HttpStatus.NOT_FOUND
+//                LocalDateTime.now()
         );
     }
 }

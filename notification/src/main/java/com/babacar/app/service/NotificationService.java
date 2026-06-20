@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
-    private final NotificationMapper templateMapper;
+    private final NotificationMapper notificationMapper;
 
     public NotificationResponse create(NotificationRequest request){
         Notification template=Notification.builder()
@@ -34,7 +34,7 @@ public class NotificationService {
                 .message(request.message())
                 .date(LocalDate.now())
                 .build();
-        return templateMapper.toTemplateResponse(template);
+        return notificationMapper.toTemplateResponse(template);
     }
 
     public NotificationResponse getByUuid(String uuid){
@@ -42,7 +42,7 @@ public class NotificationService {
                 .orElseThrow(
                         ()->new NotificationNotFoundException("template not found")
                 );
-        return templateMapper.toTemplateResponse(template);
+        return notificationMapper.toTemplateResponse(template);
     }
 
     public void delete(String uuid){
@@ -61,7 +61,7 @@ public class NotificationService {
         Page<Notification> templates=notificationRepository.findAllTemplates(pageable);
         List<NotificationResponse> content=notificationRepository.findAllTemplates(pageable)
                 .stream()
-                .map(templateMapper::toTemplateResponse)
+                .map(notificationMapper::toTemplateResponse)
                 .toList();
         return new ListResponse<NotificationResponse>(
                 content,
@@ -87,5 +87,27 @@ public class NotificationService {
                 .build();
         notificationRepository.save(notification);
 
+    }
+
+    public ListResponse<?> getAllByEmail(
+            String email,
+            int page,
+            int size
+    ){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Notification> notifications=notificationRepository.findAllByEmail(email,pageable);
+        List<NotificationResponse> content=notificationRepository.findAllByEmail(email,pageable)
+                .stream()
+                .map(notificationMapper::toTemplateResponse)
+                .toList();
+
+        return new ListResponse<NotificationResponse>(
+                content,
+                notifications.getNumber(),
+                content.size(),
+                notifications.getTotalElements(),
+                notifications.getTotalPages(),
+                notifications.hasNext()
+        );
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,6 +42,7 @@ public class InvoiceService {
     private final KafkaProducer kafkaProducer;
     private final InvoiceMapper invoiceMapper;
     private final RabbitmqProducer rabbitmqProducer;
+    private final WebClient.Builder webClient;
 
     InvoicePaymentResponse invoicePaymentResponse=InvoicePaymentResponse.builder().build();
 
@@ -58,10 +60,17 @@ public class InvoiceService {
         List<InvoiceProducts> invoiceProducts=request.invoiceProduct()
                 .stream()
                 .map(ipr->{
-                    ProductResponse productResponse=restTemplate.getForObject(
-                            "http://BILLING-PRODUCTS/api/v1/products/"+ipr.product_uuid(),
-                            ProductResponse.class
-                    );
+//                    ProductResponse productResponse=restTemplate.getForObject(
+//                            "http://BILLING-PRODUCTS/api/v1/products/"+ipr.product_uuid(),
+//                            ProductResponse.class
+//                    );
+                    ProductResponse productResponse=webClient.build()
+                            .get()
+                            .uri("http://BILLING-PRODUCTS/api/v1/products/"+ipr.product_uuid())
+                            .retrieve()
+                            .bodyToMono(ProductResponse.class)
+                            .block();
+                    assert productResponse != null;
                     return InvoiceProducts.builder()
                             .uuid(UUID.randomUUID().toString())
                             .product_uuid(productResponse.uuid())
@@ -73,10 +82,18 @@ public class InvoiceService {
                             .build();
                 }).collect(Collectors.toList());
 
-        ClientResponse clientResponse=restTemplate.getForObject(
-                "http://CLIENTS/api/v1/clients/"+request.client_uuid(),
-                ClientResponse.class
-        );
+//        ClientResponse clientResponse=restTemplate.getForObject(
+//                "http://CLIENTS/api/v1/clients/"+request.client_uuid(),
+//                ClientResponse.class
+//        );
+
+        ClientResponse clientResponse=webClient.build()
+                .get()
+                .uri("http://CLIENTS/api/v1/clients/"+request.client_uuid())
+                .retrieve()
+                .bodyToMono(ClientResponse.class)
+                .block();
+        assert clientResponse != null;
         InvoiceClients invoiceClient=invoiceMapper.mapToInvoiceClient(clientResponse);
         invoice.setClients(invoiceClient);
 

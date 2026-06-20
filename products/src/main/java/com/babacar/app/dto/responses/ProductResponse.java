@@ -1,5 +1,8 @@
 package com.babacar.app.dto.responses;
 
+import lombok.Builder;
+
+@Builder
 public record ProductResponse (
         String uuid,
         String name,

@@ -31,5 +31,5 @@ services:
       - "5672:5672" # RabbitMQ AMQP
     environment:
       RABBITMQ_HOST: localhost
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin

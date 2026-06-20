@@ -58,7 +58,7 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public ListResponse<?> getAll(int page, int size){
+    public ListResponse<ProductResponse> getAll(int page, int size){
         Pageable pageable= PageRequest.of(page,size);
         Page<Products> products=productRepository.findAllProducts(pageable);
 
